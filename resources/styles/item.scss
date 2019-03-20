@@ -1,0 +1,108 @@
+.item {
+  padding: 13px;
+  border-bottom: 1px solid #e7e7e7;
+  @include clearfix();
+
+  &:first-child {
+    border-top: 1px solid #e7e7e7;
+  }
+
+  &:nth-child(even) {
+    background-color: #f7f7f7;
+  }
+
+  &__description {
+    float: left;
+  }
+
+  &__info {
+    float: right;
+    @include clearfix();
+    transition: .3s;
+
+    .item:hover &{
+      transform: translateX(-20px);
+    }
+  }
+
+  &__value {
+    float: left;
+    transition: transform 0.3s;
+    
+    .income & {
+      color: $main-color1;
+    }
+
+    .expenses & {
+      color: $main-color2;
+    }
+  }
+  
+  &__percentage {
+    float: left;
+    margin-left: 20px;
+    transition: transform 0.3s;
+    font-size: 11px;
+    background-color: #FFDAD9;
+    padding: 3px;
+    border-radius: 3px;
+    width: 32px;
+    text-align: center;
+  }
+  
+  &__delete {
+    float: right;
+
+    &-btn {
+      background: transparent;
+      border: 1px solid $main-color1;
+      color: $main-color1;
+      cursor: pointer;
+      vertical-align: middle;
+      line-height: 1;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: none;
+      outline: none;
+
+      &:active {
+        transform: translateY(2px);
+      }
+
+      .item:hover & {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .income & {
+        color: $main-color1;
+        border-color: $main-color1;
+
+        &:hover {
+          background: $main-color1;
+          color: #fff;
+          border-color: #fff;
+        }
+      }
+
+      .expenses & {
+        color: $main-color2;
+        border-color: $main-color2;
+
+        &:hover {
+          background: $main-color2;
+          color: #fff;
+          border-color: #fff;
+        }
+      }
+
+      &-icon {
+        width: 15px;
+        fill: currentColor;
+        margin-right: .5px;
+      }
+    }
+  }
+}

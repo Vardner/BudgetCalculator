@@ -1,0 +1,73 @@
+.container {
+  min-width: 320px;
+  max-width: 1000px;
+  @include clearfix();
+  margin: 0 auto;
+  padding: 0 10px;
+  position: relative;
+  clear: both;
+  height: 100%;
+}
+
+.row {
+  position: relative;
+  margin: 0px -10px;
+  @include clearfix();
+}
+
+@for $i from 1 through 12 {
+  .cell-#{$i} {
+    width: 8.33333333333333333333333% * $i;
+    float: left;
+    position: relative;
+    padding: 0 10px;
+    @include clearfix();
+  }
+}
+
+.cell-none {
+  display: none;
+  float: left;
+  position: relative;
+}
+
+@each $type, $size in (
+        lap: '(max-width: 1439px)',
+        tab: '(max-width: 1023px)',
+        ml: '(max-width: 767px)',
+        mm: '(max-width: 424px)',
+        ms: '(min-width: 320px) and (max-width: 374px)'
+) {
+
+  @media #{$size} {
+    .cell-#{$type}-none {
+      display: none;
+    }
+  }
+
+  @for $i from 1 through 12 {
+    @media #{$size}{
+      .cell-#{$type}-#{$i} {
+        width: 8.33333333333333333333333% * $i;
+        float: left;
+        display: block;
+        position: relative;
+        padding: 0 10px;
+        @include clearfix();
+      }
+    }
+  }
+
+  @media #{$size} {
+    .cell-#{$type} {
+      width: 100%;
+      clear: both;
+      position: relative;
+      display: block;
+    }
+  }
+}
+
+
+
+

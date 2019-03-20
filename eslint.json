@@ -1,0 +1,17 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "env": {
+    "es6": true,
+    "es8": true
+  },
+  "rules": {
+    "eqeqeq": "off",
+    "curly": "warn",
+    "quotes": [
+      "warn",
+      "single"
+    ]
+  }
+}

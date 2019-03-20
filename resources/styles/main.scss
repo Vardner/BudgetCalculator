@@ -1,0 +1,26 @@
+.main {
+  color: #555;
+  font-family: Open Sans;
+  font-size: 16px;
+  position: relative;
+  font-weight: 400;
+
+  &__budget {
+    height: 40vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(images/main-bg.png);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    min-height: 280px;
+  }
+
+  &__add-form {
+    padding: 14px;
+    border-bottom: 1px solid #e7e7e7;
+    background-color: #f7f7f7;
+  }
+
+  &__stats {
+    padding-top: 50px;
+  }
+}
