@@ -39,6 +39,5 @@ Thumbs.db
 # Compiled folders and packet modules #
 ######################
 node_modules/
-public/
 .idea/
 .git/
