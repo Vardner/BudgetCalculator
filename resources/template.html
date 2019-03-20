@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="shortcut icon" href="images/favicon.png"/>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600" rel="stylesheet" type="text/css">
+	<link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+	<title>Budget Calculator</title>
+</head>
+<body>
+	<main class="main">
+		<section class="main__budget">
+			<div class="container">
+				<div class="row">
+					<div class="cell-12">
+						${require('./components/main-page/main.budget/main.budget.html')}
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="main__add-form">
+			<div class="container">
+				<div class="row">
+					<div class="cell-12">
+						${require('./components/main-page/main.add-form/main.add-form.html')}
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="main__stats">
+			<div class="container" id="Lists">
+				<div class="row">
+					<div class="cell-6">
+						${require('./components/main-page/main.income/main.income.html')}
+					</div>
+					<div class="cell-6">
+						${require('./components/main-page/main.expenses/main.expenses.html')}
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+</body>
+</html>

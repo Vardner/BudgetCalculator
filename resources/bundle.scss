@@ -1,0 +1,25 @@
+@import "styles/base/_variables";
+@import "styles/base/zindex";
+@import "styles/base/_reset";
+@import "styles/base/_mixins";
+@import "styles/base/_utilities";
+@import "styles/base/_fonts";
+@import "styles/base/_myGrid";
+@import "styles/main";
+@import "styles/item";
+@import "components/main-page/main.budget/budget";
+@import "components/main-page/main.add-form/add-form";
+@import "components/main-page/main.income/income";
+@import "components/main-page/main.expenses/expenses";
+
+
+/***** LISTS *****/
+
+.unpaid {
+  background-color: #FFDAD9 !important;
+  cursor: pointer;
+  color: #FF5049;
+}
+
+.unpaid .item__percentage { box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1); }
+.unpaid:hover .item__description { font-weight: 900; }
