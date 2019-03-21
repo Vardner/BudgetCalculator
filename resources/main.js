@@ -3,9 +3,24 @@ import ('./template.html');
 
 const LSController = (function () {
 
-
     return {
+        setItems: function (type, items) {
+            // 1. Parse income array to JSON format
+            const jsonItems = JSON.stringify(items);
 
+            // 2. Set items
+            localStorage[type] = jsonItems;
+        },
+
+        getItems: function (type) {
+            let items;
+            if (localStorage[type]) {
+                items = JSON.parse(localStorage[type]);
+            } else {
+                items = [];
+            }
+            return items;
+        }
     }
 })();
 
@@ -52,6 +67,10 @@ const budgetController = (function () {
 
     function calculateTotal (type) {
         data.totals[type] = data.items[type].reduce((acc, item) => acc + item.value, 0);
+    }
+
+    function setItems (type, items) {
+        data.items[type] = items;
     }
 
     return {
@@ -112,15 +131,18 @@ const budgetController = (function () {
 
         updatePercentages: function () {
             // 1. Recalculate percentages
-            data.items.exp.forEach(el => el.calcPercentage(data.totals.inc))
+            data.items.exp.forEach(el => {
+                // if (el.calcPercentage) {
+                    el.calcPercentage(data.totals.inc);
+                // } else {
+                //     Expense.prototype.calcPercentage.call(el, data.totals.inc);
+                // }
+
+            });
         },
 
         getPercentages: function () {
-          return data.items.exp.map((el) => el.getPercentage());
-        },
-
-        test: function () {
-            console.log(data);
+            return data.items.exp.map((el) => el.getPercentage());
         },
 
         getBudget: function () {
@@ -129,6 +151,22 @@ const budgetController = (function () {
                 percentage: data.percentage,
                 exp: data.totals.exp,
                 inc: data.totals.inc
+            }
+        },
+
+        getItems: function (type) {
+            return data.items[type];
+        },
+
+        loadItems: function (incItems, expItems) {
+            if (incItems.length) {
+                setItems('inc', incItems);
+            }
+
+            if (expItems.length) {
+                // Expanding the prototype of the elements to access the functions
+                expItems.forEach(el => el.__proto__ = Expense.prototype);
+                setItems('exp', expItems);
             }
         }
     };
@@ -156,17 +194,19 @@ const UIController = (function () {
     };
 
     function formatNumber (num) {
+        num = Math.abs(num);
         const fixedNum = num.toFixed(2);
         const splitNum = fixedNum.split('.');
         const intPart = splitNum[0];
-        const decPart =  splitNum[1];
+        const decPart = splitNum[1];
+
 
         let formattedNum;
 
         if (intPart.length > 3 && intPart.length < 7) {
-            formattedNum = intPart.substr(0, intPart.length - 3)  + ', ' + intPart.substr(-3) + '.' + decPart;
+            formattedNum = intPart.substr(0, intPart.length - 3) + ', ' + intPart.substr(-3) + '.' + decPart;
         } else if (intPart.length > 6 && intPart.length < 10) {
-            formattedNum = intPart.substr(0, intPart.length - 6)  + ', ' + intPart.substr(-6, 3) + ' ' + intPart.substr(-3) + '.' + decPart;
+            formattedNum = intPart.substr(0, intPart.length - 6) + ', ' + intPart.substr(-6, 3) + ' ' + intPart.substr(-3) + '.' + decPart;
         } else {
             formattedNum = intPart + '.' + decPart;
         }
@@ -253,12 +293,12 @@ const UIController = (function () {
         },
 
         displayBudget: function (obj) {
-            DOMElements.budgetLabel.textContent = formatNumber(obj.budget) + ' $';
+            DOMElements.budgetLabel.textContent = obj.budget < 0 ? '-' + formatNumber(obj.budget) + ' $': '' + formatNumber(obj.budget) + ' $';
             DOMElements.percentageLabel.textContent = obj.percentage > 0 ? obj.percentage + '%' : '-';
             DOMElements.expensesLabel.textContent = '- ' + formatNumber(obj.exp);
             DOMElements.incomeLabel.textContent = '+ ' + formatNumber(obj.inc);
         },
-        
+
         displayPercentages: function (percentages) {
             const percentagesLabels = document.querySelectorAll(DOMStrings.expensesPercentageLabels);
             [...percentagesLabels].forEach((label, index) => {
@@ -266,7 +306,6 @@ const UIController = (function () {
                     ? percentages[index] + '%'
                     : '-';
             })
-
 
         }
     };
@@ -286,7 +325,7 @@ const controller = (function (budgetCtrl, UICtrl, LSCtrl) {
         let budget;
 
         // 1. Calculate budget
-        budgetCtrl.calculateBudget('inc');
+        budgetCtrl.calculateBudget();
 
         // 2. Return the budget
         budget = budgetCtrl.getBudget();
@@ -306,8 +345,17 @@ const controller = (function (budgetCtrl, UICtrl, LSCtrl) {
 
         // 3. Update UI with new percentages
         UICtrl.displayPercentages(percentages);
-        console.log(percentages);
 
+    }
+
+    function updateLS (type) {
+        let itemsArray;
+
+        // 1. Get actual item array
+        itemsArray = budgetCtrl.getItems(type);
+
+        // 2. Set them to local storage
+        LSCtrl.setItems(type, itemsArray);
     }
 
     function formDataValidate ({desc, val}) {
@@ -349,10 +397,13 @@ const controller = (function (budgetCtrl, UICtrl, LSCtrl) {
             // 5. Add item to UI
             UICtrl.addListItem(newItem, itemData.type);
 
-            // 6. Update budget
+            // 6. Update localStorage
+            updateLS(itemData.type);
+
+            // 7. Update budget
             updateBudget();
 
-            // 7. Calculate and update percentages
+            // 8. Calculate and update percentages
             updatePercentages();
 
         } else {
@@ -379,10 +430,12 @@ const controller = (function (budgetCtrl, UICtrl, LSCtrl) {
 
                 // 2. Delete item from budget
                 budgetCtrl.deleteItem(type, id);
-                budgetCtrl.test();
 
                 // 3. Delete item from UI
                 UICtrl.deleteListItem(itemEl);
+
+                //4. Update LS
+                updateLS(type);
 
                 // 4. Update budget
                 updateBudget();
@@ -393,22 +446,53 @@ const controller = (function (budgetCtrl, UICtrl, LSCtrl) {
         }
     }
 
+    function loadItems () {
+        let expItems;
+        let incItems;
+        let percentages;
+
+        // 1. Get items from LS
+        expItems = LSCtrl.getItems('exp');
+        incItems = LSCtrl.getItems('inc');
+
+        // 2. Add items to budget ctrl
+        budgetCtrl.loadItems(incItems, expItems);
+
+        // 3. Update budget
+        updateBudget();
+
+        // 4. Show items on UI
+        if (incItems.length) {
+            incItems.forEach(el => UICtrl.addListItem(el, 'inc'));
+        }
+
+        if (expItems.length) {
+            expItems.forEach(el => UICtrl.addListItem(el, 'exp'));
+
+            // 4.1 Calculate exp percentage
+            budgetCtrl.updatePercentages();
+
+            // 4.2 Display percentages on UI
+            percentages = budgetCtrl.getPercentages();
+            UICtrl.displayPercentages(percentages);
+        }
+    }
+
     return {
         init: function () {
-            let budget;
+
             console.log('App is started');
 
             // 1. Set current Month
             UICtrl.setCurrentMonth();
 
-            // 2. Display current budget
-            budget = budgetCtrl.getBudget();
-            UICtrl.displayBudget(budget);
+            // 2. Load items from LS
+            loadItems();
 
-            // 3. Setup events
+            // 4. Setup events
             setupEventListeners();
         }
     };
 })(budgetController, UIController, LSController);
 
-controller.init();
+document.addEventListener('DOMContentLoaded', controller.init());

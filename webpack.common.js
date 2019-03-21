@@ -118,26 +118,33 @@ const sassRules = {
             ? {
                 loader: "style-loader",
                 options: {
-                    sourceMap: true
+                    sourceMap: isDevMode
                 }
             }
-            : MiniCssExtractPlugin.loader,
+            : {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                    publicPath: '../'
+                }
+            },
         {
             loader: "css-loader",
             options: {
-                sourceMap: true
+                sourceMap: isDevMode
             }
         },
         {
             loader: "postcss-loader",
             options: {
-                sourceMap: true
+                sourceMap: isDevMode
             }
         },
         {
             loader: "resolve-url-loader",
             options: {
-                keepQuery: true
+                keepQuery: true,
+                sourceMap: isDevMode,
+                debug: true,
             }
         },
         {
